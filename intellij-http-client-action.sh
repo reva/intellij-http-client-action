@@ -30,7 +30,7 @@ function values {
   if [[ ! -z "$_value" ]]; then
     while IFS=$'\n' read -r value ; do
       _options+=("--$_name=$value")
-    done <<< "$_value"    
+    done <<< "$_value"
   fi
 }
 
@@ -52,13 +52,16 @@ values options 'env-variables' "${INPUT_ENV_VARIABLES}"
 option options 'private-env-file' "${INPUT_PRIVATE_ENV_FILE}"
 values options 'private-env-variables' "${INPUT_PRIVATE_ENV_VARIABLES}"
 
+# https://youtrack.jetbrains.com/issue/IDEA-314789/IntelliJ-HTTP-Client-ignores-proxy-settings
+option options 'proxy' "${INPUT_PROXY}"
+
 flag options 'docker-mode' "${INPUT_DOCKER_MODE}"
 option options 'log-level' "${INPUT_LOG_LEVEL}"
 flag options 'report' "${INPUT_REPORT}"
 
 (
   set -x;
-  java \
+  java ${INPUT_JAVA_OPTS}\
     -cp '/intellij-http-client/*' \
     com.intellij.httpClient.cli.HttpClientMain \
     "${options[@]}" \
